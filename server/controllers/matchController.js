@@ -6,6 +6,7 @@ const calculateCompatibility = require('../algorithms/compatibilityScore');
 const stableMatching = require('../algorithms/stableMatching');
 const asyncHandler = require('../utils/asyncHandler');
 const { emitNotification } = require('../utils/notificationEmitter');
+const { getMLPrediction } = require('../utils/mlPrediction');
 
 const checkCompatibility = asyncHandler(async (req, res) => {
   const { donorId, recipientId } = req.params;
@@ -124,7 +125,18 @@ const runMatching = asyncHandler(async (req, res) => {
       })
     ]);
 
-    savedMatches.push(match);
+    const { mlPrediction, mlConfidence } = await getMLPrediction(allocation.donor, allocation.recipient);
+
+    savedMatches.push({
+      donorName: allocation.donor.fullName,
+      recipientName: allocation.recipient.patientName,
+      organType: allocation.donor.organType,
+      urgencyLevel: allocation.recipient.urgencyLevel,
+      compatibilityScore: allocation.compatibilityScore,
+      reasons: allocation.reasons,
+      mlPrediction,
+      mlConfidence
+    });
   }
 
   emitNotification({
@@ -149,14 +161,7 @@ const runMatching = asyncHandler(async (req, res) => {
     })),
     donorPreferences: Object.fromEntries(donorPreferences),
     recipientPreferences: Object.fromEntries(recipientPreferences),
-    allocations: savedMatches.map((match) => ({
-      donorName: match.donorId.fullName,
-      recipientName: match.recipientId.patientName,
-      organType: match.donorId.organType,
-      urgencyLevel: match.recipientId.urgencyLevel,
-      compatibilityScore: match.compatibilityScore,
-      reasons: match.reasons
-    }))
+    allocations: savedMatches
   });
 });
 

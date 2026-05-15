@@ -28,6 +28,27 @@ const getScoreStyles = (score) => {
   };
 };
 
+const getPredictionBadge = (value) => {
+  if (value === 1) {
+    return {
+      label: 'AI compatible',
+      classes: 'bg-emerald-100 text-emerald-700 border-emerald-200'
+    };
+  }
+
+  if (value === 0) {
+    return {
+      label: 'AI incompatible',
+      classes: 'bg-rose-100 text-rose-700 border-rose-200'
+    };
+  }
+
+  return {
+    label: 'AI unavailable',
+    classes: 'bg-gray-100 text-gray-600 border-gray-200'
+  };
+};
+
 const formatLabel = (value) => {
   if (!value) return 'Not available';
   return String(value).charAt(0).toUpperCase() + String(value).slice(1);
@@ -226,6 +247,33 @@ export function MatchDashboard() {
                             {reason}
                           </span>
                         ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border border-gray-100 bg-slate-50 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-700">AI Prediction</p>
+                          <p className="text-xs text-gray-500">Machine learning assistance for compatibility</p>
+                        </div>
+                        <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${getPredictionBadge(match.mlPrediction).classes}`}>
+                          {getPredictionBadge(match.mlPrediction).label}
+                        </span>
+                      </div>
+
+                      <div className="mt-4 text-sm text-gray-700">
+                        <div className="flex items-center justify-between">
+                          <span>Confidence</span>
+                          <span className="font-semibold text-gray-900">
+                            {match.mlConfidence !== null ? `${match.mlConfidence}%` : 'N/A'}
+                          </span>
+                        </div>
+                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
+                          <div
+                            className="h-full rounded-full bg-blue-500 transition-all duration-300"
+                            style={{ width: `${match.mlConfidence !== null ? Math.min(match.mlConfidence, 100) : 0}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
