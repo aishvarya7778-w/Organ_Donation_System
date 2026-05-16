@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://https://organ-ml-service.onrender.com/predict';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'https://organ-ml-service.onrender.com/predict';
 
 const BLOOD_GROUP_MAP = {
   O_PLUS: 0,
