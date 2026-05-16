@@ -1,29 +1,48 @@
-import axios from "axios";
+import axios from 'axios';
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: 'http://localhost:5000/api'
 });
 
-API.interceptors.request.use((config) => {
-  const url = config.url || "";
-  let token = localStorage.getItem("adminToken");
+const getPathname = (url) => {
+  if (!url) return '';
 
-  if (url.startsWith("/donor")) {
-    token = localStorage.getItem("donorToken");
+  try {
+    const parsedUrl = new URL(url, 'http://localhost');
+    return parsedUrl.pathname;
+  } catch {
+    return url;
+  }
+};
+
+const getAuthToken = (config) => {
+  const url = getPathname(config.url);
+  const defaultAdminToken = localStorage.getItem('token') || localStorage.getItem('adminToken');
+  const donorToken = localStorage.getItem('donorToken');
+  const recipientToken = localStorage.getItem('recipientToken');
+
+  if (url.startsWith('/donor')) {
+    return donorToken;
   }
 
-  if (url.startsWith("/recipient")) {
-    token = localStorage.getItem("recipientToken");
+  if (url.startsWith('/recipient')) {
+    return recipientToken;
   }
 
   if (
-    url.startsWith("/admin") ||
-    url.startsWith("/match") ||
-    (config.method === "patch" && url.startsWith("/donor/status")) ||
-    (config.method === "patch" && url.startsWith("/recipient/status"))
+    url.startsWith('/admin') ||
+    url.startsWith('/match') ||
+    (config.method === 'patch' && url.startsWith('/donor/status')) ||
+    (config.method === 'patch' && url.startsWith('/recipient/status'))
   ) {
-    token = localStorage.getItem("adminToken");
+    return defaultAdminToken;
   }
+
+  return defaultAdminToken;
+};
+
+API.interceptors.request.use((config) => {
+  const token = getAuthToken(config);
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -31,5 +50,25 @@ API.interceptors.request.use((config) => {
 
   return config;
 });
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const pathname = getPathname(error.config?.url);
+    const isLoginRoute = pathname === '/admin/login';
+    const isRegisterRoute = pathname === '/admin/register';
+
+    if ((status === 401 || status === 403) && !isLoginRoute && !isRegisterRoute) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default API;

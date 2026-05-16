@@ -127,16 +127,50 @@ const runMatching = asyncHandler(async (req, res) => {
 
     const { mlPrediction, mlConfidence } = await getMLPrediction(allocation.donor, allocation.recipient);
 
+    const aiReasons = [];
+
+const ageDifference = Math.abs(
+  allocation.donor.age - allocation.recipient.age
+);
+
+if (ageDifference > 20) {
+  aiReasons.push("Large donor-recipient age difference");
+}
+
+if (allocation.donor.organHealthScore < 70) {
+  aiReasons.push("Low donor organ health score");
+}
+
+if (allocation.recipient.urgencyLevel === "High") {
+  aiReasons.push("Recipient urgency is critical");
+}
+
+if (allocation.compatibilityScore < 75) {
+  aiReasons.push("Lower predicted transplant success probability");
+}
+
+if (
+  mlPrediction === 0 ||
+  mlPrediction === "Incompatible"
+) {
+  aiReasons.push("AI detected elevated transplant risk");
+}
+
+if (aiReasons.length === 0) {
+  aiReasons.push("No major AI risk factors detected");
+}
+
     savedMatches.push({
-      donorName: allocation.donor.fullName,
-      recipientName: allocation.recipient.patientName,
-      organType: allocation.donor.organType,
-      urgencyLevel: allocation.recipient.urgencyLevel,
-      compatibilityScore: allocation.compatibilityScore,
-      reasons: allocation.reasons,
-      mlPrediction,
-      mlConfidence
-    });
+  donorName: allocation.donor.fullName,
+  recipientName: allocation.recipient.patientName,
+  organType: allocation.donor.organType,
+  urgencyLevel: allocation.recipient.urgencyLevel,
+  compatibilityScore: allocation.compatibilityScore,
+  reasons: allocation.reasons,
+  mlPrediction,
+  mlConfidence,
+  aiReasons
+});
   }
 
   emitNotification({

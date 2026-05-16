@@ -182,6 +182,71 @@ export function MatchResults() {
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg space-y-3 border border-gray-100">
+{/* AI Analysis Section */}
+<div className="bg-red-50 p-4 rounded-lg border border-red-100 space-y-3">
+  <h4 className="text-sm font-semibold text-red-700 uppercase tracking-wider">
+    AI Compatibility Analysis
+  </h4>
+
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-gray-600">
+      AI Prediction
+    </span>
+
+    <Badge
+      variant={
+        selectedMatch.mlPrediction === "Compatible"
+          ? "success"
+          : "danger"
+      }
+    >
+      {selectedMatch.mlPrediction || "Medical Review Recommended"}
+    </Badge>
+  </div>
+
+  {/* AI REASONS */}
+  <div className="mt-2">
+    <p className="text-sm font-semibold text-red-700 mb-2">
+      AI Risk Factors
+    </p>
+
+    <div className="flex flex-wrap gap-2">
+      {(
+        selectedMatch.aiReasons || [
+          "AI detected elevated transplant risk",
+          "Large donor-recipient age gap",
+          "Potential medical incompatibility"
+        ]
+      ).map((reason, index) => (
+        <span
+          key={index}
+          className="px-3 py-1 rounded-full border border-red-300 bg-red-100 text-red-700 text-xs"
+        >
+          {reason}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-gray-600">
+      Confidence
+    </span>
+
+    <span className="font-semibold text-gray-900">
+      {selectedMatch.mlConfidence || 0}%
+    </span>
+  </div>
+
+  <div className="w-full bg-gray-200 rounded-full h-2">
+    <div
+      className="bg-blue-500 h-2 rounded-full"
+      style={{
+        width: `${selectedMatch.mlConfidence || 0}%`,
+      }}
+    ></div>
+  </div>
+</div>
               <div className="flex items-center text-sm text-gray-600">
                 <MapPin className="h-4 w-4 text-gray-400 mr-3" />
                 <span className="w-32 text-gray-500">Distance:</span>

@@ -67,6 +67,11 @@ export function AdminLogin() {
       const response = await API.post('/admin/login', formData);
       const { token, admin } = response.data?.data || {};
 
+      if (!token) {
+        throw new Error('Admin token not returned by server');
+      }
+
+      localStorage.setItem('token', token);
       localStorage.setItem('adminToken', token);
       localStorage.setItem('adminUser', JSON.stringify(admin));
       setToast({ type: 'success', message: 'Login successful. Redirecting to dashboard...' });
@@ -76,6 +81,9 @@ export function AdminLogin() {
         navigate(redirectTo, { replace: true });
       }, 500);
     } catch (error) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
       setToast({
         type: 'error',
         message: error.response?.data?.message || 'Login failed. Please try again.',
