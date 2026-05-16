@@ -194,14 +194,22 @@ export function MatchResults() {
     </span>
 
     <Badge
-      variant={
-        selectedMatch.mlPrediction === "Compatible"
-          ? "success"
-          : "danger"
-      }
-    >
-      {selectedMatch.mlPrediction || "Medical Review Recommended"}
-    </Badge>
+  variant={
+    selectedMatch.mlPrediction === true
+      ? "success"
+      : selectedMatch.mlPrediction === false
+      ? "danger"
+      : "warning"
+  }
+>
+  {
+    selectedMatch.mlPrediction === true
+      ? "AI Compatible"
+      : selectedMatch.mlPrediction === false
+      ? "AI Incompatible"
+      : "AI Unavailable"
+  }
+</Badge>
   </div>
 
   {/* AI REASONS */}
@@ -234,7 +242,11 @@ export function MatchResults() {
     </span>
 
     <span className="font-semibold text-gray-900">
-      {selectedMatch.mlConfidence || 0}%
+      {
+  selectedMatch.mlConfidence
+    ? `${(selectedMatch.mlConfidence * 100).toFixed(2)}%`
+    : "N/A"
+}
     </span>
   </div>
 
@@ -242,7 +254,11 @@ export function MatchResults() {
     <div
       className="bg-blue-500 h-2 rounded-full"
       style={{
-        width: `${selectedMatch.mlConfidence || 0}%`,
+        width: `${
+  selectedMatch.mlConfidence
+    ? selectedMatch.mlConfidence * 100
+    : 0
+}%`,
       }}
     ></div>
   </div>

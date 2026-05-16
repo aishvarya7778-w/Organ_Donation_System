@@ -81,9 +81,9 @@ const getMLPrediction = async (donor, recipient) => {
     const confidence = typeof data.confidence === 'number' ? Number(data.confidence) : null;
 
     return {
-      mlPrediction: compatible,
-      mlConfidence: confidence
-    };
+  mlPrediction: compatible === 1,
+  mlConfidence: confidence
+};
   } catch (error) {
     console.error('ML prediction request failed:', error.message || error);
     return {
