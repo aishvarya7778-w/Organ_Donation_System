@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://organ-backend-iemp.onrender.com',
+  baseURL: 'https://organ-backend-iemp.onrender.com/api',
 });
 
 const getPathname = (url) => {
