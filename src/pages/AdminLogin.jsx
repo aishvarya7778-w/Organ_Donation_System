@@ -64,7 +64,7 @@ export function AdminLogin() {
 
     try {
       setLoading(true);
-      const response = await API.post('/api/admin/login', formData);
+      const response = await API.post('/admin/login', formData);
       const { token, admin } = response.data?.data || {};
 
       if (!token) {
