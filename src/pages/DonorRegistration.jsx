@@ -12,6 +12,11 @@ const initialFormData = {
   organType: '',
   organHealthScore: '',
   city: '',
+  hospital: '',
+  address: '',
+  phone: '',
+  email: '',
+  emergencyContact: '',
   availabilityStatus: '',
   reportFile: null,
 };
@@ -43,14 +48,16 @@ export function DonorRegistration() {
   const validateForm = () => {
     const nextErrors = {};
     const requiredFields = [
-      'fullName',
-      'age',
-      'bloodGroup',
-      'organType',
-      'organHealthScore',
-      'city',
-      'availabilityStatus',
-    ];
+  'fullName',
+  'age',
+  'bloodGroup',
+  'organType',
+  'organHealthScore',
+  'city',
+  'phone',
+  'email',
+  'availabilityStatus',
+];
 
     requiredFields.forEach((field) => {
       if (!String(formData[field]).trim()) {
@@ -83,6 +90,11 @@ export function DonorRegistration() {
       payload.append('organType', formData.organType);
       payload.append('organHealthScore', formData.organHealthScore);
       payload.append('city', formData.city);
+      payload.append('hospital', formData.hospital);
+payload.append('phone', formData.phone);
+payload.append('email', formData.email);
+payload.append('emergencyContact', formData.emergencyContact);
+payload.append('address', formData.address);
       payload.append('availabilityStatus', formData.availabilityStatus);
 
       if (formData.reportFile) {
@@ -237,7 +249,50 @@ export function DonorRegistration() {
                   error={errors.city}
                   required
                 />
-                
+                <Input
+  label="Hospital"
+  name="hospital"
+  value={formData.hospital}
+  onChange={handleChange}
+  placeholder="AIIMS Delhi"
+/>
+
+<Input
+  label="Phone Number"
+  name="phone"
+  value={formData.phone}
+  onChange={handleChange}
+  placeholder="+91 9876543210"
+  error={errors.phone}
+  required
+/>
+
+<Input
+  label="Email"
+  name="email"
+  value={formData.email}
+  onChange={handleChange}
+  type="email"
+  placeholder="donor@email.com"
+  error={errors.email}
+  required
+/>
+
+<Input
+  label="Emergency Contact"
+  name="emergencyContact"
+  value={formData.emergencyContact}
+  onChange={handleChange}
+  placeholder="+91 9876543211"
+/>
+
+<Input
+  label="Address"
+  name="address"
+  value={formData.address}
+  onChange={handleChange}
+  placeholder="Bhopal, Madhya Pradesh"
+/>
                 <Select
                   label="Availability Status"
                   name="availabilityStatus"

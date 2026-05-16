@@ -1,36 +1,79 @@
 const mongoose = require('mongoose');
 
-const matchSchema = new mongoose.Schema(
+
+const recipientSchema = new mongoose.Schema(
   {
-    donorId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Donor',
-      required: true
-    },
-    recipientId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Recipient',
-      required: true
-    },
-    compatibilityScore: {
-      type: Number,
-      required: true,
-      min: 0,
-      max: 100
-    },
-    reasons: {
-      type: [String],
-      default: []
-    },
-    matchStatus: {
+    fullName: {
       type: String,
-      enum: ['pending', 'approved', 'rejected'],
-      default: 'pending'
+      required: true,
+      trim: true
+    },
+
+    age: {
+      type: Number,
+      required: true
+    },
+
+    gender: {
+      type: String,
+      enum: ['Male', 'Female', 'Other'],
+      required: true
+    },
+
+    bloodGroup: {
+      type: String,
+      required: true
+    },
+
+    neededOrgan: {
+      type: String,
+      required: true
+    },
+
+    urgencyLevel: {
+      type: String,
+      enum: ['Low', 'Medium', 'High', 'Critical'],
+      default: 'Medium'
+    },
+
+    city: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    hospital: {
+      type: String,
+      trim: true
+    },
+
+    address: {
+      type: String,
+      trim: true
+    },
+
+    phone: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true
+    },
+
+    emergencyContact: {
+      type: String,
+      trim: true
     }
   },
   { timestamps: true }
 );
 
+module.exports = mongoose.model('Recipient', recipientSchema);
 matchSchema.index({ donorId: 1, recipientId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Match', matchSchema);
